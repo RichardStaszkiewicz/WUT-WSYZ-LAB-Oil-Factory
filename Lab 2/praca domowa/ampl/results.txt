@@ -1,0 +1,8 @@
+Ilosc [*] :=
+ ceowniki  2400
+katowniki     0
+    prety  4000
+;
+
+profit = 167200
+
