@@ -12,3 +12,7 @@ Gdy do fabrycznego magazynu zostanie dostarczony towar, zostanie on  zmagazynowa
 ### Sytuacje wyjątkowe
 W wypadku awarii na liniach produkcyjnych, np. zepsucie maszyn bądź braku pozytywnego wyniku testu jakości, informaowany jest sztab techniczny do obsługi zaistniałej sytuacji.
 
+### Interakcja z środowiskiem
+1. Fabryka składa zamówienia u Firmy Zaopatrzeniowej
+2. Fabryka informuje swoich klientów o niedostępności towaru
+3. _Fabryka zaksięgowuje rozliczenia z Dystrybutorem (????)_
