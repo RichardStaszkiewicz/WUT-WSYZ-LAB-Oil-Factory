@@ -12,7 +12,7 @@ Gdy do fabrycznego magazynu zostanie dostarczony towar, zostanie on  zmagazynowa
 ### Sytuacje wyjątkowe
 W wypadku awarii na liniach produkcyjnych, np. zepsucie maszyn bądź braku pozytywnego wyniku testu jakości, informowany jest sztab techniczny do obsługi zaistniałej sytuacji.
 
-### Interakcja z środowiskiem
+### Interakcja ze środowiskiem
 1. Fabryka składa zamówienia u Firmy Zaopatrzeniowej
 2. Fabryka informuje swoich klientów o niedostępności towaru
 3. _Fabryka zaksięgowuje rozliczenia z Dystrybutorem (????)_
@@ -26,9 +26,19 @@ Zamówienie składa jeden z klientów. Pierwszą czynnością jest sprawdzenie m
 ### Braki w magazynie
 W przypadku braków w magazynie zamawiamy więcej towaru z fabryki. Po otrzymaniu towaru zostało ulokowanie go w magazynie, co kończy proces uzupełnienia braków.
 
+### Interakacja ze środowiskiem
+1. Dystrybutor składa zamówienie na więcej towaru od Fabryki
+1. Dystrybutor w przypadku odmowy przyjęcia zamówienia wysyła wiadomość z odmową do klienta
+1. Dystrybutor w przypadku przyjęcia zamówienia wysyła towar do klienta
+1. Dystrybutor rozlicza się z towaru z Fabryką
 
 ## Klienci
 
 ### Potrzeba towaru
 
 Klient najpierw wybiera towar jaki chciałby zamówić oraz dostawcę według jego osobistych preferencji. Dostawcą może być fabryka lub dystrybutor. Następnie klient składa zamówienie i czeka na odpowiedź. Jeśli odpowiedź jest pozytywna - klient otrzymuje zakupiony towar i płaci za zamówienie. Jeśli jednak jest negatywna, klient może zamówić towar z innego źródła.
+
+### Interakcja ze środowiskiem 
+1. Klient może złożyć zamówienie do Fabryki
+1. Klient może złożyć zamówienie do Dystrybutora
+1. Klient płaci za zamówienia Dystrybutorowi lub Fabryce
