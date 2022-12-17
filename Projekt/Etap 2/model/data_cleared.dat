@@ -1,6 +1,7 @@
 set OLEJ_ROSLINNY = R1, R2;
 set OLEJ_NIEROSLINNY = O1, O2, O3;
 set MIESIACE = Styczen, Luty, Marzec, Kwiecien, Maj, Czerwiec;
+set LINK_M = (Luty, Styczen) (Marzec, Luty) (Kwiecien, Marzec) (Maj, Kwiecien) (Czerwiec, Maj);
 
 param ceny_oleju_roslinego: R1		R2 :=
 Styczen						110		120
@@ -17,3 +18,8 @@ Marzec							130		100		95
 Kwiecien						120		120		125
 Maj								150		110		105
 Czerwiec						140		80		135;
+
+param pojemnosc_magazynu_na_surowy_olej_ka¿dego_rodzaju := 1000;
+param cena_magazynowania_surowego_oleju := 5;
+param wartosc_startowa_magazynu_na_olej_surowy := 500;
+param ile_musi_zostac_na_koniec := 500;
