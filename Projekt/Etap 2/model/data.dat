@@ -78,6 +78,7 @@ M1, K4		16
 M1, K6		12;
 
 param pojemnosc_magazynow_miesiac :=
+F	100000000;
 M1	70
 M2	50
 M3	100
