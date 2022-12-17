@@ -19,7 +19,18 @@ Kwiecien						120		120		125
 Maj								150		110		105
 Czerwiec						140		80		135;
 
-param pojemnosc_magazynu_na_surowy_olej_ka¿dego_rodzaju := 1000;
 param cena_magazynowania_surowego_oleju := 5;
 param wartosc_startowa_magazynu_na_olej_surowy := 500;
+
+param czy_pierwszy_miesiac:
+Styczen		1
+Luty		0
+Marzec		0
+Kwiecien	0
+Maj			0
+Czerwiec	0;
+
+param rafinacja_oleju_roslinnego_max := 200;
+param rafinacja_oleju_nieroslinnego_max := 250;
 param ile_musi_zostac_na_koniec := 500;
+param pojemnosc_magazynu_na_surowy_olej_ka¿dego_rodzaju := 1000;
