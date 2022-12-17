@@ -1,0 +1,93 @@
+# sety
+set olej_roslinny = R1, R2;
+set olej_nieroslinny = O1, O2, O3;
+set miesiace = Styczen, Luty, Marzec, Kwiecien, Maj, Czerwiec;
+set DOSTAWCY := F, M1, M2, M3, M4, M5;
+set KLIENCI := K1, K2, K3, K4, K5, K6;
+# Link w postanci (nadawca, odbiorca)
+set LINKS_FM := (F, M1) (F, M2) (F, M3) (F, M4) (F, M5)
+# forma preferencji (klient, dostawca)
+set preferencje := (K1, F) (K2, M1) 
+					(K3, F) (K3, M1) (K3, M2) (K3, M3) (K3, M4) (K3, M5)
+					(K4, F) (K4, M1) (K4, M2) (K4, M3) (K4, M4) (K4, M5)
+					(K5, M2) (K5, M3)
+					(K6, M3) (K6, M4)
+
+# Parametry do constraintów
+param rafinacja_oleju_roslinnego_max := 200;
+param radinacja_oleju_nieroslinnego_max := 250;
+param magazyn_na_surowy_olej_ka¿dego_rodzaju := 1000;
+param koszt_magazynowania_surowego_oleju := 5;
+param wartosc_startowa_magazynu_na_olej_surowy := 500;
+param ile_musi_zostac_na_koniec := 500;
+
+param twardosc_produktu_min := 3;
+param twardosc_produktu_max := 6;
+param cena_produktu := 200;
+
+
+# Tabelki
+param twardosc_surowego_oleju_roslinnego :=
+R1	8.8;
+R2	6.1;
+
+param twardosc_surowego_oleju_nie_roslinnego :=
+O1	2.0
+O2	4.2
+O3	5.0
+
+param ceny_oleju_roslinego :=
+			R1	R2
+Styczen
+Luty
+Marzec
+Kwiecien
+Maj
+Czerwiec
+
+param ceny_oleju_nieroslinego :=
+			O1	O2	O3
+Styczen
+Luty
+Marzec
+Kwiecien
+Maj
+Czerwiec
+
+
+param cost_fm :=
+F, M1	6
+F, M2	9
+F, M3	14
+F, M4	7
+F, M5	8;
+
+
+
+set LINKS_MK := (F, K1) (F, K3) (F, K4) (F, K6)
+				(;
+
+param cost_mk :=
+F, K1		12
+F, K3		17
+F, K4		14
+F, K6		20
+M1, K2		16
+M1, K3		6
+M1, K4		16
+M1, K6		12;
+
+param pojemnosc_magazynow_miesiac :=
+M1	70
+M2	50
+M3	100
+M4	40
+M5	80;
+
+param zapotrzebowanie_klientow :=
+K1	100
+K2	20
+K3	80
+K4	70
+K5	120
+K6	40;

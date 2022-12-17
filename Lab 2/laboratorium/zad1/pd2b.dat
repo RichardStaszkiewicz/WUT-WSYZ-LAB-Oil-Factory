@@ -1,0 +1,7 @@
+set PROD := prety, katowniki, ceowniki;
+param:		produkcja 	cena	limit :=
+prety			200			31		4000
+katowniki		140			9		3000
+ceowniki		120			18		2500;
+param godz := 40;
+param limit_maszyn := 2;

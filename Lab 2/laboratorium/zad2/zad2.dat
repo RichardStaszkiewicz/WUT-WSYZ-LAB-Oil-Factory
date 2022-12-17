@@ -1,0 +1,20 @@
+set BROWARY := Haarlem, Eindhoven;
+set HURTOWNIE := Amsterdam, Breda, Gouda, Amersfoort, Den_Bosch;
+
+param:		mozliwosci 	:=
+Haarlem		47.23
+Eindhoven	63.5;
+
+param zapotrzebowanie 	:=
+Amsterdam	28
+Breda		16
+Gouda		22
+Amersfoort	31
+Den_Bosch	12;
+
+param transport: Haarlem Eindhoven :=
+Amsterdam 	131.5		554
+Breda 		405			351
+Gouda 		188.5		479
+Amersfoort 	396			366
+Den_Bosch 	485			155.6;

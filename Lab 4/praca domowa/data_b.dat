@@ -1,0 +1,13 @@
+set TASKS := A B C D E;
+
+# Link = (operacja, poprzednik)
+set LINKS := (C, A) (D, B) (E, B) (E, D);
+
+param: 	nominalT	shortenC	minimalT :=
+A		8			95			7
+B		17			75			14
+C		9			10			5
+D		16			65			9
+E		5			85			4;
+
+param resources := 0;

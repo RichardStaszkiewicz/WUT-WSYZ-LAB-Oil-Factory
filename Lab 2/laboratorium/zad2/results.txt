@@ -1,0 +1,13 @@
+Ilosc :=
+Amersfoort Eindhoven   31
+Amersfoort Haarlem      0
+Amsterdam  Eindhoven    0
+Amsterdam  Haarlem     28
+Breda      Eindhoven   16
+Breda      Haarlem      0
+Den_Bosch  Eindhoven   12
+Den_Bosch  Haarlem      0
+Gouda      Eindhoven    2.77
+Gouda      Haarlem     19.23
+;
+
