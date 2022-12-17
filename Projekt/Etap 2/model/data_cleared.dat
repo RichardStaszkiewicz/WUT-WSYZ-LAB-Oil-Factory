@@ -1,0 +1,19 @@
+set OLEJ_ROSLINNY = R1, R2;
+set OLEJ_NIEROSLINNY = O1, O2, O3;
+set MIESIACE = Styczen, Luty, Marzec, Kwiecien, Maj, Czerwiec;
+
+param ceny_oleju_roslinego: R1		R2 :=
+Styczen						110		120
+Luty						130		130
+Marzec						110		140
+Kwiecien					120		110
+Maj							100		120
+Czerwiec					90		100;
+
+param ceny_oleju_nieroslinego:	O1		O2		O3 :=
+Styczen							130		110		115
+Luty							110		90		115
+Marzec							130		100		95
+Kwiecien						120		120		125
+Maj								150		110		105
+Czerwiec						140		80		135;
