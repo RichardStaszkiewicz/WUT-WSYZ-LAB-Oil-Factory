@@ -2,6 +2,7 @@ set OLEJ_ROSLINNY = R1, R2;
 set OLEJ_NIEROSLINNY = O1, O2, O3;
 set MIESIACE = Styczen, Luty, Marzec, Kwiecien, Maj, Czerwiec;
 set LINK_M = (Luty, Styczen) (Marzec, Luty) (Kwiecien, Marzec) (Maj, Kwiecien) (Czerwiec, Maj);
+set MIESIACE_KONCOWE = Czerwiec;
 
 param ceny_oleju_roslinego: R1		R2 :=
 Styczen						110		120
