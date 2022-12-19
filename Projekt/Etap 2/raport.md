@@ -23,6 +23,14 @@ $$$$
 
 <br />
 
+### **Hierarchia zmiennych**
+#### **Hierarchia zakupu oleju**
+![image info](./img/hierarchia_zakupu.png)
+<br />
+
+#### **Hierarchia magazynowania oleju**
+![image info](./img/hierarchia_magazynowania.png)
+
 ### **Ograniczenia**
 <br />
 
