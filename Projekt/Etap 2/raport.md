@@ -31,6 +31,14 @@ $$$$
 #### **Hierarchia magazynowania oleju**
 ![image info](./img/hierarchia_magazynowania.png)
 
+#### **Hierarchia dsytrybucji oleju**
+![image info](./img/hierarchia_dystrybucji.png)
+<br />
+
+#### **Hierarchia zysku**
+![image info](./img/hierarchia_zysku.png)
+<br />
+
 ### **Ograniczenia**
 <br />
 
