@@ -1,0 +1,53 @@
+# set BLOKI := A, B, C, D, E;
+# set FAZY := sciany, dach, okna, wykonczenie
+
+set PROJEKT := Asciany Adach Aokna Awykonczenie 
+				Bsciany Bdach Bokna Bwykonczenie 
+				Csciany Cdach Cokna Cwykonczenie 
+				Dsciany Ddach Dokna Dwykonczenie 
+				Esciany Edach Eokna Ewykonczenie
+				Fundamenty Alejki Zielen Wykonczenie ;
+
+				
+# Format linku: (operacja, poprzednik)
+set LINKS := (Asciany,Fundamenty) (Adach, Asciany) (Aokna, Adach) (Awykonczenie,Aokna)
+				(Bsciany,Fundamenty) (Bdach,Bsciany) (Bokna,Bdach) (Bwykonczenie,Bokna)
+				(Csciany,Fundamenty) (Cdach,Csciany) (Cokna,Cdach) (Cwykonczenie,Cokna)
+				(Dsciany,Fundamenty) (Ddach,Dsciany) (Dokna,Ddach) (Dwykonczenie,Dokna)
+				(Esciany,Fundamenty) (Edach,Esciany) (Eokna,Edach) (Ewykonczenie,Eokna)
+				(Zielen,Aokna) (Zielen,Bokna) (Zielen,Cokna) (Zielen,Dokna) (Zielen,Eokna)
+				(Alejki,Aokna) (Alejki,Bokna) (Alejki,Cokna) (Alejki,Dokna) (Alejki,Eokna)
+				(Wykonczenie,Zielen) (Wykonczenie,Alejki)
+				(Wykonczenie,Awykonczenie) (Wykonczenie,Bwykonczenie) (Wykonczenie,Cwykonczenie)
+				(Wykonczenie,Dwykonczenie) (Wykonczenie,Ewykonczenie)
+				(Csciany,Adach) (Csciany,Bdach)
+				(Esciany,Cdach) (Dsciany,Cdach);
+
+param:			czas_trwania_n	minimalny_t 	l_pracownikow:=
+Asciany			60				45				25
+Adach			40				30				15
+Aokna			20				15				20
+Awykonczenie	70				55				15
+Bsciany			50				40				10
+Bdach			40				30				25
+Bokna			30				20				30
+Bwykonczenie	50				40				25
+Csciany			50				40				10
+Cdach			40				30				25
+Cokna			30				20				30
+Cwykonczenie	50				40				25
+Dsciany			70				55				20
+Ddach			50				35				25
+Dokna			30				25				30
+Dwykonczenie	30				25				20
+Esciany			70				55				20
+Edach			50				35				25
+Eokna			30				25				30
+Ewykonczenie	30				25				20
+Fundamenty		50				50				1
+Alejki			25				15				10
+Zielen			20				15				10
+Wykonczenie		30				30				1;
+
+param resources = 240000;
+param overdue_costs = 150;
