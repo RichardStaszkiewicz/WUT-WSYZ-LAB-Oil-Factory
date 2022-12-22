@@ -108,6 +108,12 @@ $$$$
 
 <br />
 
+> **Twardość**
+>
+>$ T_{max},\hspace{1 mm} \geq \ T_{O} * R_{O} $
+
+<br />
+
 > **Dla każdego klienta**
 >
 >$ x_{DP} \leq z_K $
@@ -123,3 +129,6 @@ Poniżej znajdują się opisy zmiennych użytych w ograniczeniach:
 |:--------------:|:-----|
 | $p_M$ | Pojemność magazynu w danym miesiącu |
 | $z_K$ | Zapotrzebowanie klienta |
+| $T_{max}$ | Maksymalna twardość oleju |
+| $T_{O}$ | Twardość oleju |
+| $R_{O}$ | Rafinowana ilość oleju |
