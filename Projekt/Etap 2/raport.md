@@ -132,3 +132,12 @@ Poniżej znajdują się opisy zmiennych użytych w ograniczeniach:
 | $T_{max}$ | Maksymalna twardość oleju |
 | $T_{O}$ | Twardość oleju |
 | $R_{O}$ | Rafinowana ilość oleju |
+
+<br />
+
+## Możliwości rozwoju modelu
+- Dodanie nowych zmiennych decyzyjnych opisujących ilość produktów potrzebnych do wytworzenia oleju, nadanie ograniczeń możliwości zakupu takich produktów przez firmę w danym miesiącu. Dodanie kosztów nabywania wspomnianych produktów.
+- Rozszerzenie ograniczeń związanych z tym ile produktu gotowego może firma sprzedać w danym miesiącu.
+- Uwzględnienie kosztów transportu oleju do rafinerii oraz samego procesu.
+- Wstawienie zmiennych decyzyjnych informujących o utracie masy oleju podczas procesu rafinacji.
+- Zdefiniowanie ograniczeń związanych z maksymalną kwotą przeznaczoną na transport w danym miesiącu.
