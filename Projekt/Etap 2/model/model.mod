@@ -3,6 +3,11 @@
 # GNU Public Licence
 # execute with: option solver cplex; followed by reset; model model.mod; data data_cleared.dat; solve;
 
+# TODO:
+# Blankiety mog¹ zamawiaæ tylko w przód
+# Policzenie rafinowanego oleju z ka¿dej kategorii
+
+
 
 
 ################### ZBIORY #####################
@@ -21,11 +26,11 @@ set KLIENCI;
 
 
 ################### PARAMETRY #####################
-#-----Faza I. Zakup surowego oleju.----- ### TODO: Blankiety mog¹ zamawiaæ tylko w przód
+#-----Faza I. Zakup surowego oleju.----- 
 param ceny_oleju_roslinego{MIESIACE, OLEJ_ROSLINNY} >= 0;
 param ceny_oleju_nieroslinego{MIESIACE, OLEJ_NIEROSLINNY} >= 0;
 
-#-----Faza II. Przechowywanie surowego oleju.----- ### TODO: Policzenie rafinowanego oleju z ka¿dej kategorii
+#-----Faza II. Przechowywanie surowego oleju.-----
 param cena_magazynowania_surowego_oleju >= 0;
 param czy_pierwszy_miesiac {MIESIACE} binary; # WskaŸnik binarny, czy dany miesi¹c jest pierwszy.
 param rafinacja_oleju_roslinnego_max >= 0;
@@ -143,6 +148,7 @@ subject to count_zamowiony_olej_nieroslinny {o in OLEJ_NIEROSLINNY, m in MIESIAC
 	zamowiony_olej_nieroslinny[o, m] = sum{m_zam in MIESIACE} blankiet_zamowienia_nieroslinnego[o, m_zam, m];
 
 #-----Faza III. Rafinacja oleju.-----
+# wyliczenie ca³oœci wyprodukowanego oleju w danym miesi¹cu
 subject to count_wyprodukowany_olej {m in MIESIACE}:
 	wyprodukowany_olej[m] = (sum{o in OLEJ_ROSLINNY} rafinowany_olej_roslinny[o, m]) + (sum{o in OLEJ_NIEROSLINNY}rafinowany_olej_nieroslinny[o, m]);
 
@@ -158,8 +164,18 @@ subject to count_koszt_dystrybucji_do_klientow {k in KLIENCI, m in MIESIACE}:
 	koszt_dystrybucji_do_klientow[k, m] = sum{d in DOSTAWCY} olej_dostarczony_klientom[k, d, m] * is_conection[k, d] * cena_transportu_do_klientow[k, d];
 
 #-----Faza V. Liczenie zysku.-----
+# obliczenie zysku ze sprzeda¿y
 subject to count_zysk:
 	zysk = sum{k in KLIENCI, d in DOSTAWCY, m in MIESIACE} olej_dostarczony_klientom[k, d, m] * is_conection[k, d] * cena_produktu;
+
+################### OGRANICZENIA FUNKCJONALNE ####################
+# [typ oleju, miesi¹c zamówienia, miesi¹c dostarczenia]
+# ograniczenie na zamawianie w przesz³oœæ oleju roslinnego
+subject to blankiet_roslinny_zamawia_w_przyszlosc {o in OLEJ_ROSLINNY, m_zam in MIESIACE}
+	sum{delta in 1..m_zam-1}  blankiet_zamowienia_roslinnego[o, m_zam, delta] = 0;
+# ograniczenie na zamawianie w przesz³oœæ oleju nieroslinnego
+subject to blankiet_nieroslinny_zamawia_w_przyszlosc {o in OLEJ_NIEROSLINNY, m_zam in MIESIACE}
+	sum{delta in 1..m_zam-1}  blankiet_zamowienia_nieroslinnego[o, m_zam, delta] = 0;
 
 ################### OGRANICZENIA W£AŒCIWE #####################
 # ograniczenia na maksymaln¹ rafinacjê olejów roœlinnych
