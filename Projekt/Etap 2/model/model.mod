@@ -3,13 +3,6 @@
 # GNU Public Licence
 # execute with: option solver cplex; followed by reset; model model.mod; data data_cleared.dat; solve;
 
-# TODO:
-# Blankiety mog¹ zamawiaæ tylko w przód
-# Policzenie rafinowanego oleju z ka¿dej kategorii
-
-
-
-
 ################### ZBIORY #####################
 #-----Faza I. Zakup surowego oleju.-----
 set OLEJ_ROSLINNY;		# nazwy olejów roœlinnych
@@ -45,6 +38,13 @@ param cena_transportu_do_klientow {KLIENCI, DOSTAWCY} >= 0;
 
 #-----Faza V. Liczenie zysku.-----
 param cena_produktu;
+
+#-----Faza VI. Ograniczenia.------
+param twardosc_oleju_roslinnego{OLEJ_ROSLINNY} >= 0;
+param twardosc_oleju_nieroslinnego{OLEJ_NIEROSLINNY} >= 0;
+param max_twardosc_oleju >= 0;
+param min_twardosc_oleju >= 0;
+param pojemnosc_magazynow_dostawcow{DOSTAWCY} >= 0;
 
 ################### ZMIENNE #####################
 #-----Faza I. Zakup surowego oleju.-----
@@ -177,6 +177,7 @@ subject to blankiet_roslinny_zamawia_w_przyszlosc {o in OLEJ_ROSLINNY, m_zam in 
 subject to blankiet_nieroslinny_zamawia_w_przyszlosc {o in OLEJ_NIEROSLINNY, m_zam in MIESIACE}
 	sum{delta in 1..m_zam-1}  blankiet_zamowienia_nieroslinnego[o, m_zam, delta] = 0;
 
+
 ################### OGRANICZENIA W£AŒCIWE #####################
 # ograniczenia na maksymaln¹ rafinacjê olejów roœlinnych
 subject to rafinacja_roslinnego_constraint {m in MIESIACE}:
@@ -196,4 +197,21 @@ subject to odpowiednie_zapasy_surowego_oleju_roslinnego_na_koniec_produkcji {m i
 # ograniczenie na surowiec nieroœlinny pozosta³y w magazynach w czerwcu
 subject to odpowiednie_zapasy_surowego_oleju_nieroslinnego_na_koniec_produkcji {m in MIESIACE_KONCOWE, o in OLEJ_NIEROSLINNY}:
 	zmagazynowany_olej_nieroslinny[o, m] >= wartosc_startowa_magazynu_na_olej_surowy;
+# ograniczenie na minimaln¹ twardoœæ oleju roœlinnego
+subject to ograniczona_twardosc_oleju_roslinnego {m in MIESIACE}:
+	sum{o in OLEJ_ROSLINNY} rafinowany_olej_roslinny[o, m] * twardosc_oleju_roslinnego[o] >= min_twardosc_oleju * sum{o in OLEJ_ROSLINNY} rafinowany_olej_roslinny[o, m];
+# ograniczenie na minimaln¹ twardoœæ oleju nieroœlinnego
+subject to ograniczona_twardosc_oleju_nieroslinnego {m in MIESIACE}:
+	sum{o in OLEJ_NIEROSLINNY} rafinowany_olej_nieroslinny[o, m] * twardosc_oleju_nieroslinnego[o] >= min_twardosc_oleju * sum{o in OLEJ_NIEROSLINNY} rafinowany_olej_nieroslinny[o, m];
+# ograniczenie na maksymaln¹ twardoœæ oleju roœlinnego
+subject to ograniczona_twardosc_oleju_roslinnego {m in MIESIACE}:
+	sum{o in OLEJ_ROSLINNY} rafinowany_olej_roslinny[o, m] * twardosc_oleju_roslinnego[o] <= max_twardosc_oleju * sum{o in OLEJ_ROSLINNY} rafinowany_olej_roslinny[o, m];
+# ograniczenie na minimaln¹ twardoœæ oleju nieroœlinnego
+subject to ograniczona_twardosc_oleju_nieroslinnego {m in MIESIACE}:
+	sum{o in OLEJ_NIEROSLINNY} rafinowany_olej_nieroslinny[o, m] * twardosc_oleju_nieroslinnego[o] <= max_twardosc_oleju * sum{o in OLEJ_NIEROSLINNY} rafinowany_olej_nieroslinny[o, m];
+# ograniczenie na pojemnoœæ magazynów dostawców
+subject to ograniczona_pojemnosc_magazynow_dostawcow {d in DOSTAWCY, m in MIESIACE}:
+	zapelnienie_dostawcy_magazynow[d, m] <= pojemnosc_magazynow_dostawcow[d];
+
+
 	
