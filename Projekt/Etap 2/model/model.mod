@@ -1,6 +1,8 @@
 # Richard Staszkiewicz idx. 310918
 # 18.12.2022
 # GNU Public Licence
+# execute with: option solver cplex; followed by reset; model model.mod; data data_cleared.dat; solve;
+
 
 
 ################### ZBIORY #####################
@@ -12,6 +14,10 @@ set MIESIACE;			# nazwy miesiêcy
 #-----Faza II. Przechowywanie surowego oleju.-----
 set LINK_M within (MIESIACE cross MIESIACE);	# Format linku: (miesi¹c, poprzednik)
 set MIESIACE_KONCOWE within MIESIACE;
+
+#-----Faza IV. Dystrybucja rafinowanego oleju.-----
+set DOSTAWCY;
+set KLIENCI;
 
 
 ################### PARAMETRY #####################
@@ -27,6 +33,13 @@ param rafinacja_oleju_nieroslinnego_max >= 0;
 param wartosc_startowa_magazynu_na_olej_surowy >= 0;
 param pojemnosc_magazynu_na_surowy_olej_ka¿dego_rodzaju >= 0;
 
+#-----Faza IV. Dystrybucja rafinowanego oleju.-----
+param koszt_transportu_firma_dostawca {DOSTAWCY} >= 0;
+param is_conection {KLIENCI, DOSTAWCY} binary; # wskaŸnik binarny po³¹czenia miêdzy klientem a dostawc¹
+param cena_transportu_do_klientow {KLIENCI, DOSTAWCY} >= 0;
+
+#-----Faza V. Liczenie zysku.-----
+param cena_produktu;
 
 ################### ZMIENNE #####################
 #-----Faza I. Zakup surowego oleju.-----
@@ -62,10 +75,23 @@ var rafinowany_olej_roslinny {OLEJ_ROSLINNY, MIESIACE} >= 0;
 # Ile oleju nieroœlinnego wyrafinowano w danym miesi¹cu
 var rafinowany_olej_nieroslinny {OLEJ_NIEROSLINNY, MIESIACE} >= 0;
 
+#-----Faza III. Rafinacja oleju.----- # constrainty na twardoœæ dorobiæ
+var wyprodukowany_olej {MIESIACE} >= 0;
+
+#-----Faza IV. Dystrybucja rafinowanego oleju.-----
+var koszt_dystrybucji >= 0;
+var koszt_dystrybucji_do_dostawcy {DOSTAWCY, MIESIACE} >= 0;
+var koszt_dystrybucji_do_klientow {KLIENCI, MIESIACE} >= 0;
+var zapelnienie_dostawcy_magazynow {DOSTAWCY, MIESIACE} >= 0;
+var olej_dostarczony_klientom {KLIENCI, DOSTAWCY, MIESIACE} >= 0;
+
+#-----Faza V. Liczenie zysku.-----
+var zysk >= 0;
+
 
 ################### FUNKCJA STRATY #####################
 #-----Funkcja celu. Maksymalizacja zysku-----
-minimize koszt_nabycia_oleju + koszt_magazynowania_surowego_oleju;
+maximize f_celu: zysk - koszt_nabycia_oleju - koszt_magazynowania_surowego_oleju - koszt_dystrybucji;
 
 
 
@@ -114,8 +140,26 @@ subject to count_zamowiony_olej_roslinny {o in OLEJ_ROSLINNY, m in MIESIACE}:
 	zamowiony_olej_roslinny[o, m] = sum{m_zam in MIESIACE} blankiet_zamowienia_roslinnego[o, m_zam, m];
 # wyliczenie zamówionego oleju nieroœlinnego - wszystkie zamówienia dostarczane w tym miesi¹cu
 subject to count_zamowiony_olej_nieroslinny {o in OLEJ_NIEROSLINNY, m in MIESIACE}:
-	zamowiony_olej_nieroslinny[o, m] = sum{m_zam in MIESIAEC} blankiet_zamowienia_nieroslinnego[o, m_zam, m];
+	zamowiony_olej_nieroslinny[o, m] = sum{m_zam in MIESIACE} blankiet_zamowienia_nieroslinnego[o, m_zam, m];
 
+#-----Faza III. Rafinacja oleju.-----
+subject to count_wyprodukowany_olej {m in MIESIACE}:
+	wyprodukowany_olej[m] = (sum{o in OLEJ_ROSLINNY} rafinowany_olej_roslinny[o, m]) + (sum{o in OLEJ_NIEROSLINNY}rafinowany_olej_nieroslinny[o, m]);
+
+#-----Faza IV. Dystrybucja rafinowanego oleju.-----
+# wyliczenie ogólnego kosztu dystrybucji do funkcji celu
+subject to count_koszt_dystrybucji:
+	koszt_dystrybucji = (sum{d in DOSTAWCY, m in MIESIACE} koszt_dystrybucji_do_dostawcy[d, m]) + (sum{k in KLIENCI, m in MIESIACE} koszt_dystrybucji_do_klientow[k, m]);
+# wyliczenie kosztu dystrybucji do dostawców
+subject to count_koszt_dystrybucji_do_dostawcy {d in DOSTAWCY, m in MIESIACE}:
+	koszt_dystrybucji_do_dostawcy[d, m] = zapelnienie_dostawcy_magazynow[d, m] * koszt_transportu_firma_dostawca[d];
+# wyliczenie kosztu dystrybucji do klientów
+subject to count_koszt_dystrybucji_do_klientow {k in KLIENCI, m in MIESIACE}:
+	koszt_dystrybucji_do_klientow[k, m] = sum{d in DOSTAWCY} olej_dostarczony_klientom[k, d, m] * is_conection[k, d] * cena_transportu_do_klientow[k, d];
+
+#-----Faza V. Liczenie zysku.-----
+subject to count_zysk:
+	zysk = sum{k in KLIENCI, d in DOSTAWCY, m in MIESIACE} olej_dostarczony_klientom[k, d, m] * is_conection[k, d] * cena_produktu;
 
 ################### OGRANICZENIA W£AŒCIWE #####################
 # ograniczenia na maksymaln¹ rafinacjê olejów roœlinnych
@@ -123,7 +167,7 @@ subject to rafinacja_roslinnego_constraint {m in MIESIACE}:
 	sum{o in OLEJ_ROSLINNY} rafinowany_olej_roslinny[o, m] <= rafinacja_oleju_roslinnego_max;
 # ograniczenia na maksymaln¹ rafinacjê olejów nieroœlinnych
 subject to rafinacja_nieroslinnego_constraint {m in MIESIACE}:
-	sum{o in OLEJ_ROSLINNY} rafinowany_olej_nieroslinny[o, m] <= rafinacja_oleju_nieroslinnego_max;
+	sum{o in OLEJ_NIEROSLINNY} rafinowany_olej_nieroslinny[o, m] <= rafinacja_oleju_nieroslinnego_max;
 # ograniczenie na maksymaln¹ pojemnoœæ magazynów na roœlinny olej surowy
 subject to pojemnosc_magazynow_na_olej_roslinny_surowy {m in MIESIACE, o in OLEJ_ROSLINNY}:
 	zmagazynowany_olej_roslinny[o, m] <= pojemnosc_magazynu_na_surowy_olej_ka¿dego_rodzaju;
@@ -134,25 +178,6 @@ subject to pojemnosc_magazynow_na_olej_nieroslinny_surowy {m in MIESIACE, o in O
 subject to odpowiednie_zapasy_surowego_oleju_roslinnego_na_koniec_produkcji {m in MIESIACE_KONCOWE, o in OLEJ_ROSLINNY}:
 	zmagazynowany_olej_roslinny[o, m] >= wartosc_startowa_magazynu_na_olej_surowy;
 # ograniczenie na surowiec nieroœlinny pozosta³y w magazynach w czerwcu
-subject to odpowiednie_zapasy_surowego_oleju_nieroslinnego_na_koniec_produkcji {m in MIESIACE_KONCOWE, o in OLEJ_ROSLINNY}:
+subject to odpowiednie_zapasy_surowego_oleju_nieroslinnego_na_koniec_produkcji {m in MIESIACE_KONCOWE, o in OLEJ_NIEROSLINNY}:
 	zmagazynowany_olej_nieroslinny[o, m] >= wartosc_startowa_magazynu_na_olej_surowy;
 	
-	
-
-# Working with links
-# set MAGAZYNY;
-# set KLIENCI;
-# set LINKS_MK within (MAGAZYNY cross KLIENCI);
-# param cost {LINKS};
-
-# param czas_trwania {PROJEKT} >= 0; # czas trwania ka¿dego z zadañ
-
-# var Tstart {PROJEKT} >= 0;
-# var TMax >= 0;
-# minimize cos: TMax;
-
-# subject to sth {(k, j) in LINKS}: TMax >= cost[k, j];
-
-# subject to Balance {(k, j) in LINKS}: Tstart[k] >= Tstart[j] + czas_trwania[j];
-
-# subject to Max {p in PROJEKT}: TMax >= Tstart[p] + czas_trwania[p];

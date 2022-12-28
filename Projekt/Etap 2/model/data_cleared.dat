@@ -3,6 +3,9 @@ set OLEJ_NIEROSLINNY = O1, O2, O3;
 set MIESIACE = Styczen, Luty, Marzec, Kwiecien, Maj, Czerwiec;
 set LINK_M = (Luty, Styczen) (Marzec, Luty) (Kwiecien, Marzec) (Maj, Kwiecien) (Czerwiec, Maj);
 set MIESIACE_KONCOWE = Czerwiec;
+set DOSTAWCY := F, M1, M2, M3, M4, M5;
+set KLIENCI := K1, K2, K3, K4, K5, K6;
+
 
 param ceny_oleju_roslinego: R1		R2 :=
 Styczen						110		120
@@ -23,7 +26,7 @@ Czerwiec						140		80		135;
 param cena_magazynowania_surowego_oleju := 5;
 param wartosc_startowa_magazynu_na_olej_surowy := 500;
 
-param czy_pierwszy_miesiac:
+param czy_pierwszy_miesiac :=
 Styczen		1
 Luty		0
 Marzec		0
@@ -33,5 +36,31 @@ Czerwiec	0;
 
 param rafinacja_oleju_roslinnego_max := 200;
 param rafinacja_oleju_nieroslinnego_max := 250;
-param ile_musi_zostac_na_koniec := 500;
+# param ile_musi_zostac_na_koniec := 500;
 param pojemnosc_magazynu_na_surowy_olej_ka¿dego_rodzaju := 1000;
+
+param koszt_transportu_firma_dostawca :=
+F	0
+M1	6
+M2	9
+M3	14
+M4	7
+M5	8;
+
+param is_conection: 	F	M1	M2	M3	M4	M5 :=
+K1						1	0	0	0	0	0
+K2						0	1	0	0	0	0
+K3						1	1	1	1	1	1
+K4						1	1	1	1	1	1
+K5						0	0	1	1	0	0
+K6						0	0	0	1	1	0;
+
+param cena_transportu_do_klientow:		F	M1	M2	M3	M4	M5 :=
+K1										12	0	14	0	0	18
+K2										0	15	7	12	0	0
+K3										17	6	5	18	5	5
+K4										14	16	19	0	19	7
+K5										0	0	6	9	9	8
+K6										20	12	0	14	13	0;
+
+param cena_produktu := 200;
