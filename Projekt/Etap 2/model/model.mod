@@ -1,7 +1,7 @@
 # Richard Staszkiewicz idx. 310918
 # 18.12.2022
 # GNU Public Licence
-# execute with: option solver cplex; followed by reset; model model.mod; data data_cleared.dat; solve;
+# execute with: option solver cplex; followed by reset; model model.mod; data data_numeric_months.dat; solve;
 
 ################### ZBIORY #####################
 #-----Faza I. Zakup surowego oleju.-----
@@ -12,6 +12,7 @@ set MIESIACE;			# nazwy miesiêcy
 #-----Faza II. Przechowywanie surowego oleju.-----
 set LINK_M within (MIESIACE cross MIESIACE);	# Format linku: (miesi¹c, poprzednik)
 set MIESIACE_KONCOWE within MIESIACE;
+set MIESIACE_POCZATKOWE within MIESIACE;
 
 #-----Faza IV. Dystrybucja rafinowanego oleju.-----
 set DOSTAWCY;
@@ -25,7 +26,7 @@ param ceny_oleju_nieroslinego{MIESIACE, OLEJ_NIEROSLINNY} >= 0;
 
 #-----Faza II. Przechowywanie surowego oleju.-----
 param cena_magazynowania_surowego_oleju >= 0;
-param czy_pierwszy_miesiac {MIESIACE} binary; # WskaŸnik binarny, czy dany miesi¹c jest pierwszy.
+# param czy_pierwszy_miesiac {MIESIACE} binary; # WskaŸnik binarny, czy dany miesi¹c jest pierwszy.
 param rafinacja_oleju_roslinnego_max >= 0;
 param rafinacja_oleju_nieroslinnego_max >= 0;
 param wartosc_startowa_magazynu_na_olej_surowy >= 0;
@@ -69,9 +70,9 @@ var koszt_magazynowania_surowego_roslinnego >= 0;
 # suma kosztów przechowywania surowego oleju nieroœlinnego
 var koszt_magazynowania_surowego_nieroslinnego >= 0;
 # Ile surowego oleju roœlinnego pozostaje na koniec miesi¹ca w magazynie
-var zmagazynowany_olej_roslinny {OLEJ_ROSLINNY, MIESIACE} default 0;
+var zmagazynowany_olej_roslinny {OLEJ_ROSLINNY, MIESIACE} >= 0 default 0;
 # Ile surowego oleju nieroœlinnego pozostaje na koniec miesi¹ca w magazynie
-var zmagazynowany_olej_nieroslinny {OLEJ_NIEROSLINNY, MIESIACE} default 0;
+var zmagazynowany_olej_nieroslinny {OLEJ_NIEROSLINNY, MIESIACE} >= 0 default 0;
 # Ile surowego oleju roœlinnego zamówiono w danym miesi¹cu
 var zamowiony_olej_roslinny {OLEJ_ROSLINNY, MIESIACE} >= 0;
 # Ile surowego oleju nieroœlinnego zamówiono w danym miesi¹cu
@@ -133,14 +134,14 @@ subject to count_koszt_magazynowania_surowego_nieroslinnego:
 subject to count_zmagazynowany_olej_roslinny {(m, m_pop) in LINK_M, o in OLEJ_ROSLINNY}:
 	zmagazynowany_olej_roslinny[o, m] = zmagazynowany_olej_roslinny[o, m_pop] + zamowiony_olej_roslinny[o, m] - rafinowany_olej_roslinny[o, m];
 # wyliczanie zmagazynowanego oleju roslinnego w styczniu
-subject to count_zmagazynowany_olej_roslinny_edge {m in MIESIACE, o in OLEJ_ROSLINNY}:
-	zmagazynowany_olej_roslinny[o, m] >= czy_pierwszy_miesiac[m]*wartosc_startowa_magazynu_na_olej_surowy + zamowiony_olej_roslinny[o, m] - rafinowany_olej_roslinny[o, m];
+subject to count_zmagazynowany_olej_roslinny_edge {m in MIESIACE_POCZATKOWE, o in OLEJ_ROSLINNY}:
+	zmagazynowany_olej_roslinny[o, m] = wartosc_startowa_magazynu_na_olej_surowy + zamowiony_olej_roslinny[o, m] - rafinowany_olej_roslinny[o, m];
 # wyliczanie zmagazynowanego oleju nieroslinnego
 subject to count_zmagazynowany_olej_nieroslinny {(m, m_pop) in LINK_M, o in OLEJ_NIEROSLINNY}:
 	zmagazynowany_olej_nieroslinny[o, m] = zmagazynowany_olej_nieroslinny[o, m_pop] + zamowiony_olej_nieroslinny[o, m] - rafinowany_olej_nieroslinny[o, m];
 # wyliczanie zmagazynowanego oleju nieroslinnego w styczniu
-subject to count_zmagazynowany_olej_nieroslinny_edge {m in MIESIACE, o in OLEJ_NIEROSLINNY}:
-	zmagazynowany_olej_nieroslinny[o, m] >= czy_pierwszy_miesiac[m]*wartosc_startowa_magazynu_na_olej_surowy + zamowiony_olej_nieroslinny[o, m] - rafinowany_olej_nieroslinny[o, m];
+subject to count_zmagazynowany_olej_nieroslinny_edge {m in MIESIACE_POCZATKOWE, o in OLEJ_NIEROSLINNY}:
+	zmagazynowany_olej_nieroslinny[o, m] = wartosc_startowa_magazynu_na_olej_surowy + zamowiony_olej_nieroslinny[o, m] - rafinowany_olej_nieroslinny[o, m];
 # wyliczenie zamówionego oleju roœlinnego - wszystkie zamówienia dostarczane w tym miesi¹cu
 subject to count_zamowiony_olej_roslinny {o in OLEJ_ROSLINNY, m in MIESIACE}:
 	zamowiony_olej_roslinny[o, m] = sum{m_zam in MIESIACE} blankiet_zamowienia_roslinnego[o, m_zam, m];
@@ -218,4 +219,10 @@ subject to ograniczone_zapotrzebowanie_klientów {k in KLIENCI, m in MIESIACE}:
 	sum {d in DOSTAWCY} olej_dostarczony_klientom[k, d, m] <= zapotrzebowanie_klientow[k];
 
 
-	
+##################### OGRANICZENIA NA SUPPLY FLOW########################
+# ograniczenie na dostawcê dostarczaj¹cego max tyle, ile ma w magazynach
+subject to ograniczenia_flow_dystrybutor_klient {d in DOSTAWCY, m in MIESIACE}:
+	sum {k in KLIENCI} olej_dostarczony_klientom[k, d, m] <= zapelnienie_dostawcy_magazynow[d, m];
+# ograniczenie na fabrykê, dostarczaj¹æa dostawcom tyle, ile wyprodukowa³¹
+subject to ograniczenia_flow_fabryka_dystrybutor {m in MIESIACE}:
+	sum {d in DOSTAWCY} zapelnienie_dostawcy_magazynow[d, m] <= wyprodukowany_olej[m];
