@@ -76,10 +76,18 @@ param max_twardosc_oleju := 6;
 param min_twardosc_oleju := 3;
 
 param pojemnosc_magazynow_dostawcow :=
-F	100000000;
+F	100000000
 M1	70
 M2	50
 M3	100
 M4	40
 M5	80;
+
+param zapotrzebowanie_klientow :=
+K1	100
+K2	20
+K3	80
+K4	70
+K5	120
+K6	40;
 
